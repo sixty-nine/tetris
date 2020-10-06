@@ -21,9 +21,13 @@ export class Board {
 
   public clear() {
     for (let j = 0; j < this.height; j++) {
-      for (let i = 0; i < this.width; i++) {
-        this.board[j][i] = 0;
-      }
+      this.clearLine(j);
+    }
+  }
+
+  private clearLine(line: number) {
+    for (let i = 0; i < this.width; i++) {
+      this.board[line][i] = 0;
     }
   }
 
@@ -69,6 +73,45 @@ export class Board {
 
     // No collision
     return false;
+  }
+
+  private isLineFull(line: number): boolean {
+
+    if (line < 0 || line >= this.height) {
+      return false;
+    }
+
+    for (let i = 0; i < this.width; i++) {
+      if (this.board[line][i] === 0) {
+        // If we find an empty block then the line is not full
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private removeLine(line: number): void {
+    if (line <= 0 || line >= this.height) {
+      return;
+    }
+
+    for (let i = line; i > 0; i--) {
+      this.board[i] = this.board[i - 1];
+    }
+    this.board[0] = new Array(this.width);
+    this.clearLine(0);
+  }
+
+  public scanFullLines() {
+    let j = this.height - 1;
+    while (j > 0) {
+      if (this.isLineFull(j)) {
+        this.removeLine(j);
+      } else {
+        j -= 1;
+      }
+    }
   }
 
   public merge(s: Matrix4x4, p: Position) {

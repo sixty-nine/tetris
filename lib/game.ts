@@ -17,22 +17,9 @@ export class Game {
     this.board = new Board(width, height);
   }
 
-  private insertNewPiece() {
+  private newPiece() {
     this.currentPiece = new Piece(randomTile(), randomPositive(0, 3));
     this.currentPosition = [Math.floor((this.board.width - 4) / 2), 0];
-  }
-
-  public isGameOver = (): boolean => this.gameOver;
-
-  public rotateLeft() {
-    if (!this.currentPiece) {
-      return;
-    }
-
-    this.currentPiece.rotateLeft();
-    if (this.board.hasCollisions(this.currentPosition, this.currentPiece.getShape())) {
-      this.currentPiece.rotateRight();
-    }
   }
 
   private canMoveDown() {
@@ -57,6 +44,19 @@ export class Game {
     }
     const [x, y] = this.currentPosition;
     return !this.board.hasCollisions([x + 1, y], this.currentPiece.getShape());
+  }
+
+  public isGameOver = (): boolean => this.gameOver;
+
+  public rotateLeft() {
+    if (!this.currentPiece) {
+      return;
+    }
+
+    this.currentPiece.rotateLeft();
+    if (this.board.hasCollisions(this.currentPosition, this.currentPiece.getShape())) {
+      this.currentPiece.rotateRight();
+    }
   }
 
   public rotateRight() {
@@ -85,7 +85,7 @@ export class Game {
   public run() {
 
     if (!this.currentPiece) {
-      this.insertNewPiece();
+      this.newPiece();
       return;
     }
 
@@ -96,8 +96,8 @@ export class Game {
         this.gameOver = true;
       }
       this.board.merge(this.currentPiece.getShape(), this.currentPosition);
-      // TODO check for lines and remove
-      this.insertNewPiece();
+      this.board.scanFullLines();
+      this.newPiece();
     }
 
   }
