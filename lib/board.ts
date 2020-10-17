@@ -1,11 +1,10 @@
-import { OnOff, Position, Matrix4x4 } from './types';
-
+import { TileColor, Position, Matrix4x4, FullLineCallback, callFunction } from './types';
 
 export class Board {
 
   public readonly width: number;
   public readonly height: number;
-  private readonly board: Array<Array<OnOff>>;
+  private readonly board: Array<Array<TileColor>>;
 
   constructor(width: number, height: number) {
     this.height = height;
@@ -37,12 +36,12 @@ export class Board {
       && y >= 0 && y < this.height;
   }
 
-  public getContent(p: Position): OnOff {
+  public getContent(p: Position): TileColor {
     const [x, y] = p;
     return this.board[y][x];
   }
 
-  public setContent(p: Position, val: OnOff) {
+  public setContent(p: Position, val: TileColor) {
     const [x, y] = p;
     this.board[y][x] = val;
   }
@@ -103,10 +102,11 @@ export class Board {
     this.clearLine(0);
   }
 
-  public scanFullLines() {
+  public scanFullLines(onFullLine?: FullLineCallback) {
     let j = this.height - 1;
     while (j > 0) {
       if (this.isLineFull(j)) {
+        callFunction(onFullLine, j);
         this.removeLine(j);
       } else {
         j -= 1;

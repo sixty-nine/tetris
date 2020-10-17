@@ -15,10 +15,24 @@
 
 <script lang="ts">
   import Vue from 'vue'
-  import { Game } from '~/lib/game';
+  import { Game, GameConfig } from '~/lib/game';
   import Graphics from '~/lib/graphics';
+  import { Piece } from "~/lib/types";
 
-  const game = new Game();
+  let score = 0;
+  const gameConfig: GameConfig = {
+    onFullLine: (line: number) => {
+      score += 100;
+      console.log('Full line', line);
+    },
+    onGameOver: () => {
+      alert('game over: '+ score);
+    },
+    onNewPiece: (cur: Piece, next: Piece) => {
+      console.log('new piece', cur.name, next.name);
+    },
+  };
+  const game = new Game(gameConfig);
 
   const sketchConfig = {
     animate: true,
@@ -46,6 +60,10 @@
     runningGame = setTimeout(runGame, 1000 / gameSpeed);
   };
   const runToNextPiece = (p: any = null) => {
+    if (game.isGameOver()) {
+      return;
+    }
+
     clearGame();
     if (p === null) {
       p = game.currentPiece;
@@ -99,13 +117,13 @@
     },
     beforeDestroy() {
 
-      this.sketchManager && this.sketchManager.unload();
+      this.sketchManager?.unload();
 
     },
     methods: {
-      onNext(count) {
+      onNext(count: number) {
         for (let i = 0; i < count; i++) {
-          runGame(1000);
+          runGame();
         }
       },
       onNextPiece() {
@@ -137,7 +155,7 @@
         console.log('CUR POS', game.currentPosition);
         console.log('CUR ROT', game.currentPiece ? game.currentPiece.curRotation : null);
       },
-      sketch({context, width, height }) {
+      sketch({context, width, height }: any) {
         context.fillStyle = 'black';
         context.fillRect(0, 0, width, height);
 
@@ -145,12 +163,12 @@
 
         runGame();
 
-        return () => {
-
-          if (game.isGameOver()) {
-            gameOver();
+        return (context) => {
+          if (!this.bla) {
+            this.bla = true;
+            console.log(context);
           }
-
+          console.log(context.time);
           graph.drawBoard(game.board);
 
           if (game.currentPiece) {

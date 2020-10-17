@@ -1,25 +1,49 @@
 import { Board } from './board';
-import { randomTile } from './tiles';
-import { Position, Piece } from './types';
-import { randomPositive } from './helpers';
 
+import {
+
+  Position,
+  Piece,
+  FullLineCallback,
+  GameOverCallback,
+  NewPieceCallback,
+  callFunction
+
+} from './types';
+
+export type GameConfig = {
+  onFullLine?: FullLineCallback,
+  onGameOver?: GameOverCallback,
+  onNewPiece?: NewPieceCallback,
+}
 
 export class Game {
 
   private gameOver: boolean = false;
   public readonly board: Board;
   public currentPiece?: Piece;
+  public nextPiece?: Piece;
   public currentPosition: Position = [0, 0];
+  private config: GameConfig;
 
-  constructor() {
+  constructor(config: GameConfig) {
     const width = 15;
     const height = 30;
     this.board = new Board(width, height);
+    this.config = config;
   }
 
   private newPiece() {
-    this.currentPiece = new Piece(randomTile(), randomPositive(0, 3));
+    if (!this.nextPiece) {
+      this.nextPiece = Piece.randomPiece();
+    }
+
+    this.currentPiece = this.nextPiece;
+    this.nextPiece = Piece.randomPiece();
+
     this.currentPosition = [Math.floor((this.board.width - 4) / 2), 0];
+
+    callFunction(this.config.onNewPiece, this.currentPiece, this.nextPiece);
   }
 
   private canMoveDown() {
@@ -84,6 +108,10 @@ export class Game {
 
   public run() {
 
+    if (this.gameOver) {
+      return;
+    }
+
     if (!this.currentPiece) {
       this.newPiece();
       return;
@@ -92,11 +120,15 @@ export class Game {
     if (this.canMoveDown()) {
       this.currentPosition[1] += 1;
     } else {
+
       if (this.currentPosition[1] === 0) {
         this.gameOver = true;
+        callFunction(this.config.onGameOver);
+        return;
       }
+
       this.board.merge(this.currentPiece.getShape(), this.currentPosition);
-      this.board.scanFullLines();
+      this.board.scanFullLines(this.config.onFullLine);
       this.newPiece();
     }
 

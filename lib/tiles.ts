@@ -1,6 +1,15 @@
 import { Tile } from './types';
 import { randomPositive } from './helpers';
 
+const tileNames: Array<string> = [
+  'Right L',
+  'Left L',
+  'Right S',
+  'Left S',
+  'Bar',
+  'Block',
+  'D',
+]
 
 const tiles: Array<Tile> = [
     [ // Right L
@@ -187,8 +196,12 @@ const tiles: Array<Tile> = [
     ],
 ];
 
-export const randomTile = () =>
-    tiles[randomPositive(1, tiles.length - 1)]
-;
+export const randomTile = () => {
+  const index = randomPositive(1, tiles.length - 1);
+  return {
+    tile: tiles[index],
+    name: tileNames[index],
+  };
+};
 
 export default tiles;
