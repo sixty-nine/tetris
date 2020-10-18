@@ -20,6 +20,12 @@
   import { Piece } from "~/lib/types";
 
   let score = 0;
+  let normalSpeed = 1;
+  let fastSpeed = 20;
+  let gameSpeed = normalSpeed;
+  let boardChanged = true;
+
+
   const gameConfig: GameConfig = {
     onFullLine: (line: number) => {
       score += 100;
@@ -30,66 +36,22 @@
     },
     onNewPiece: (cur: Piece, next: Piece) => {
       console.log('new piece', cur.name, next.name);
+      gameSpeed = normalSpeed;
+    },
+    onBoardChanged: () => {
+      boardChanged = true;
     },
   };
   const game = new Game(gameConfig);
 
+
   const sketchConfig = {
     animate: true,
-    hotkeys: false,  // <-- the only default value passed
-    // Set loop duration to 3 seconds
-    duration: 3,
-    // Use a small size for our GIF output
+    hotkeys: false,
     dimensions: [512, 512],
-    // Optionally specify an export frame rate, defaults to 30
-    fps: 10,
+    loop: false,
   };
 
-
-  let runningGame : number;
-  const gameSpeed = 2;
-  const clearGame = () => {
-    if (runningGame) {
-      clearTimeout(runningGame);
-      runningGame =0;
-    }
-  };
-  const runGame = () => {
-    clearGame();
-    game.run();
-    runningGame = setTimeout(runGame, 1000 / gameSpeed);
-  };
-  const runToNextPiece = (p: any = null) => {
-    if (game.isGameOver()) {
-      return;
-    }
-
-    clearGame();
-    if (p === null) {
-      p = game.currentPiece;
-    }
-    if (game.currentPiece === p) {
-      game.run();
-      runningGame = setTimeout(() => {
-        runToNextPiece(p);
-      }, 100);
-    } else {
-      runGame();
-    }
-    const curPiece = game.currentPiece;
-
-    while (curPiece === game.currentPiece) {
-      runGame();
-    }
-    clearTimeout(runningGame);
-    runningGame = runGame();
-  };
-  const gameOver = () => {
-    if (runningGame) {
-      alert('game over');
-    }
-    clearGame();
-  };
 
   export default Vue.extend({
     data: () => ({
@@ -121,13 +83,8 @@
 
     },
     methods: {
-      onNext(count: number) {
-        for (let i = 0; i < count; i++) {
-          runGame();
-        }
-      },
       onNextPiece() {
-        runToNextPiece();
+        gameSpeed = fastSpeed;
       },
       onRotateLeft() {
         game.rotateLeft();
@@ -155,25 +112,29 @@
         console.log('CUR POS', game.currentPosition);
         console.log('CUR ROT', game.currentPiece ? game.currentPiece.curRotation : null);
       },
-      sketch({context, width, height }: any) {
-        context.fillStyle = 'black';
-        context.fillRect(0, 0, width, height);
+      sketch({ context }: any) {
 
         const graph = new Graphics(context);
+        graph.clear();
 
-        runGame();
+        let delta = 0;
 
-        return (context) => {
-          if (!this.bla) {
-            this.bla = true;
-            console.log(context);
+        return (context: any) => {
+
+          delta += context.deltaTime;
+          if (delta > (1 / gameSpeed)) {
+            delta = 0;
+            game.run();
           }
-          console.log(context.time);
-          graph.drawBoard(game.board);
 
-          if (game.currentPiece) {
-            graph.drawPiece(game.currentPiece, game.currentPosition);
+          if (boardChanged) {
+            boardChanged = false;
+            graph.drawBoard(game.board);
+            if (game.currentPiece) {
+              graph.drawPiece(game.currentPiece, game.currentPosition);
+            }
           }
+
         };
       },
     },

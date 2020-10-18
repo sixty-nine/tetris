@@ -14,6 +14,11 @@ export default class Graphics {
     this.context = context;
   }
 
+  public clear() {
+    this.context.fillStyle = 'black';
+    this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
+  }
+
   public drawBoard(board: Board) {
 
     this.context.fillStyle = 'yellow';

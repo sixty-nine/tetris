@@ -7,6 +7,7 @@ import {
   FullLineCallback,
   GameOverCallback,
   NewPieceCallback,
+  BoardChangedCallback,
   callFunction
 
 } from './types';
@@ -15,6 +16,7 @@ export type GameConfig = {
   onFullLine?: FullLineCallback,
   onGameOver?: GameOverCallback,
   onNewPiece?: NewPieceCallback,
+  onBoardChanged?: BoardChangedCallback,
 }
 
 export class Game {
@@ -27,8 +29,8 @@ export class Game {
   private config: GameConfig;
 
   constructor(config: GameConfig) {
-    const width = 15;
-    const height = 30;
+    const width = 10;
+    const height = 20;
     this.board = new Board(width, height);
     this.config = config;
   }
@@ -114,11 +116,13 @@ export class Game {
 
     if (!this.currentPiece) {
       this.newPiece();
+      callFunction(this.config.onBoardChanged);
       return;
     }
 
     if (this.canMoveDown()) {
       this.currentPosition[1] += 1;
+      callFunction(this.config.onBoardChanged);
     } else {
 
       if (this.currentPosition[1] === 0) {
@@ -130,6 +134,7 @@ export class Game {
       this.board.merge(this.currentPiece.getShape(), this.currentPosition);
       this.board.scanFullLines(this.config.onFullLine);
       this.newPiece();
+      callFunction(this.config.onBoardChanged);
     }
 
   }

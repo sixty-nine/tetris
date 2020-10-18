@@ -18,6 +18,7 @@ export type Tile = Tuple<Matrix4x4, 4>;
 export type FullLineCallback = (line: number) => void;
 export type GameOverCallback = () => void;
 export type NewPieceCallback = (curPiece: Piece, nextPiece: Piece) => void;
+export type BoardChangedCallback = () => void;
 
 // Call the given function with the given arguments ONLY if the function is defined.
 export const callFunction = (fct?: Function, ...args: unknown[]) =>
