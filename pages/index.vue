@@ -1,20 +1,20 @@
 <template>
   <div class="canvas__container">
-    <canvas ref="canvas"/>
-    <div>
-      <button @click="onLeft">L</button>
-      <button @click="onRotateLeft">L-Rot</button>
-      <button @click="onNext(1)">Next Step</button>
-      <button @click="onNextPiece">Next Piece</button>
-      <button @click="onRotateRight">R-Rot</button>
-      <button @click="onRight">R</button>
-      <button @click="onDebug">Debug</button>
-    </div>
+    <canvas ref="canvas"></canvas>
+    <Controls
+      :on-debug="onDebug"
+      :on-left="onLeft"
+      :on-next-piece="onNextPiece"
+      :on-right="onRight"
+      :on-rotate-left="onRotateLeft"
+      :on-rotate-right="onRotateRight">
+    </Controls>
   </div>
 </template>
 
 <script lang="ts">
   import Vue from 'vue'
+  import Controls from '~/components/Controls.vue';
   import { Game, GameConfig } from '~/lib/game';
   import Graphics from '~/lib/graphics';
   import { Piece } from "~/lib/types";
@@ -54,6 +54,9 @@
 
 
   export default Vue.extend({
+    components: {
+      Controls,
+    },
     data: () => ({
       sketchManager: null,
     }),
@@ -143,12 +146,10 @@
 
 <style scoped>
   canvas {
-
     display: block;
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-
   }
 </style>
