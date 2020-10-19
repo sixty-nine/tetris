@@ -114,6 +114,7 @@
         console.log('CUR PIECE', game.currentPiece ? game.currentPiece.getShape() : null);
         console.log('CUR POS', game.currentPosition);
         console.log('CUR ROT', game.currentPiece ? game.currentPiece.curRotation : null);
+        console.log('SCORE', score);
       },
       sketch({ context }: any) {
 
