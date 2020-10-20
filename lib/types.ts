@@ -28,12 +28,14 @@ export const callFunction = (fct?: Function, ...args: unknown[]) =>
 export class Piece {
   private readonly tile: Tile;
   private _curRotation;
+  private _color: number;
   private _name: string;
 
-  constructor(name: string, tile: Tile, curRotation = 0) {
+  constructor(name: string, tile: Tile, color: number, curRotation = 0) {
     this.tile = tile;
     this._curRotation = curRotation;
     this._name = name;
+    this._color = color;
   }
 
   get curRotation() {
@@ -44,9 +46,26 @@ export class Piece {
     return this._name;
   }
 
+  get color() {
+    return this._color;
+  }
+
+  private static lastColor = 0;
+
+  private static randomColor(): number {
+    // Make sure we don't choose twice the same color
+    let color: number;
+    do {
+      color = randomPositive(1, 8);
+    } while (color == this.lastColor);
+    this.lastColor = color;
+    return color;
+  }
+
   public static randomPiece(): Piece {
     const r = randomTile();
-    return new Piece(r.name, r.tile, randomPositive(0, 3));
+    // FIXME: in Tetris, how is the color actually chosen? Not sure it's random...
+    return new Piece(r.name, r.tile, this.randomColor(), randomPositive(0, 3));
   };
 
   public getShape = (): Matrix4x4 => this.tile[this._curRotation];

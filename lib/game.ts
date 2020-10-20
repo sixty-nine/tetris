@@ -131,7 +131,7 @@ export class Game {
         return;
       }
 
-      this.board.merge(this.currentPiece.getShape(), this.currentPosition);
+      this.board.merge(this.currentPiece.getShape(), this.currentPosition, this.currentPiece.color);
       this.board.scanFullLines(this.config.onFullLine);
       this.newPiece();
       callFunction(this.config.onBoardChanged);

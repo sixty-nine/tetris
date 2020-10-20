@@ -43,12 +43,10 @@ export default class Graphics {
       );
     }
 
-
-
-
     for (let i = 0; i < board.width; i++) {
       for (let j = 0; j < board.height; j++) {
-        this.context.fillStyle = board.getContent([i, j]) ? 'blue' : 'white';
+        const cell = board.getContent([i, j]);
+        this.context.fillStyle = Graphics.getColorForPiece(cell);
         this.context.fillRect(
           this.offsetX + (i * this.size),
           this.offsetY + j * this.size,
@@ -65,7 +63,7 @@ export default class Graphics {
 
     for (let i = 0; i < 4; i++) {
       for (let j = 0; j < 4; j++) {
-        this.context.fillStyle = shape[j][i] ? 'red' : 'rgba(255, 255, 0, 0.2)';
+        this.context.fillStyle = shape[j][i] ? Graphics.getColorForPiece(piece.color) : 'rgba(255, 220, 0, 0.2)';
         this.context.fillRect(
           this.offsetX + (x + i) * this.size,
           this.offsetY + (y + j) * this.size,
@@ -73,6 +71,20 @@ export default class Graphics {
           this.size - 1
         );
       }
+    }
+  }
+
+  private static getColorForPiece(n: number): string {
+    switch (n) {
+      case 1: return 'blue';
+      case 2: return 'red';
+      case 3: return 'green';
+      case 4: return 'orange';
+      case 5: return 'purple';
+      case 6: return 'fuchsia';
+      case 7: return 'teal';
+      case 8: return 'lime';
+      default: return 'white';
     }
   }
 };

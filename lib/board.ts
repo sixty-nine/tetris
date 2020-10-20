@@ -114,13 +114,13 @@ export class Board {
     }
   }
 
-  public merge(s: Matrix4x4, p: Position) {
+  public merge(s: Matrix4x4, p: Position, color: number = 1) {
     const [x, y] = p;
     for (let j = 0; j < 4; j++) {
       for (let i = 0; i < 4; i++) {
         if (s[j][i]) {
           if (this.isInside([x + i, y + j])) {
-            this.setContent([x + i, y + j], 1);
+            this.setContent([x + i, y + j], color);
           }
         }
       }
