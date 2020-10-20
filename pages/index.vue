@@ -1,6 +1,8 @@
 <template>
-  <div class="canvas__container">
-    <canvas ref="canvas"></canvas>
+  <div>
+    <div class="canvas__container">
+      <canvas ref="canvas"></canvas>
+    </div>
     <Controls
       :on-debug="onDebug"
       :on-left="onLeft"
@@ -32,7 +34,7 @@
       console.log('Full line', line);
     },
     onGameOver: () => {
-      alert('game over: '+ score);
+      alert('game over: ' + score);
     },
     onNewPiece: (cur: Piece, next: Piece) => {
       console.log('new piece', cur.name, next.name);
@@ -82,9 +84,7 @@
 
     },
     beforeDestroy() {
-
       this.sketchManager?.unload();
-
     },
     methods: {
       onNextPiece() {
@@ -104,11 +104,16 @@
       },
       onKeyPress(e: KeyboardEvent) {
         switch (e.key.toLowerCase()) {
-          case 'a': return this.onLeft();
-          case 'd': return this.onRight();
-          case 'w': return this.onRotateLeft();
-          case 's': return this.onRotateRight();
-          case ' ': return this.onNextPiece();
+          case 'a':
+            return this.onLeft();
+          case 'd':
+            return this.onRight();
+          case 'w':
+            return this.onRotateLeft();
+          case 's':
+            return this.onRotateRight();
+          case ' ':
+            return this.onNextPiece();
         }
       },
       onDebug() {
@@ -117,7 +122,7 @@
         console.log('CUR ROT', game.currentPiece ? game.currentPiece.curRotation : null);
         console.log('SCORE', score);
       },
-      sketch({ context }: any) {
+      sketch({context}: any) {
 
         const graph = new Graphics(context);
         graph.clear();
