@@ -45,11 +45,12 @@
   const game = new Game(gameConfig);
 
 
-  const sketchConfig = {
+  const sketchConfig: Record<string, unknown> = {
     animate: true,
     hotkeys: false,
     dimensions: [512, 512],
     loop: false,
+    canvas: null,
   };
 
 
